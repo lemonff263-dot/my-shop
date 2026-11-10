@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function admin() { return request.auth != null; }
+
+    match /products/{id} { allow read: if true; allow write: if admin(); }
+    match /settings/{id} { allow read: if true; allow write: if admin(); }
+    match /expenses/{id} { allow read, write: if admin(); }
+
+    match /orders/{id} {
+      allow get: if true;                 // অর্ডার আইডি জানলে ট্র্যাক করা যাবে
+      allow list, update, delete: if admin();   // সব অর্ডার শুধু অ্যাডমিন দেখবে
+      allow create: if get(/databases/$(db)/documents/settings/main).data.get('orderOpen', true) == true   // বট অফ করলে নতুন অর্ডার বন্ধ
+        && request.resource.data.status == 'pending'
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80
+        && request.resource.data.phone.matches('^01[0-9]{9}$')
+        && request.resource.data.address.size() <= 300
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 20
+        && request.resource.data.total is number && request.resource.data.total > 0
+        && request.resource.data.advance is number
+        && request.resource.data.advance <= request.resource.data.total;
+    }
+
+    match /reviews/{rid} {
+      allow read: if true;
+      allow delete: if admin();
+      allow create: if request.resource.data.star in [1, 2, 3, 4, 5]
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.name.size() <= 60
+        && rid == request.resource.data.oid + '_' + request.resource.data.pid
+        && get(/databases/$(db)/documents/orders/$(request.resource.data.oid)).data.status == 'delivered';
+    }
+  }
+}
