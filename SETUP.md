@@ -4,7 +4,7 @@
 Netlify → Add new site → Import from GitHub → `my-shop` → Deploy। (Vercel-এও চলবে: Framework "Other")
 
 ## ২. Firebase Console (একবারই)
-0. **Authentication → Sign-in method:** Email/Password চালু আছে কিনা দেখুন। **Authentication → Users → Add user:** ইমেইল `lemonff264@gmail.com`, পাসওয়ার্ড `Lemon444` (এই ইউজার না থাকলে বট থেকে অর্ডার অন/অফ কাজ করবে না আর অ্যাডমিন লগইনও হবে না)।
+0. **Authentication → Sign-in method:** Email/Password চালু আছে কিনা দেখুন। **Authentication → Users → Add user:** ইমেইল `lemonff264@gmail.com`, পাসওয়ার্ড `Lemon444` (বট কনফার্ম/রিজেক্ট করতে এই ইউজার দিয়ে লগইন করে। ইউজার না থাকলে বট প্রথমবার নিজেই বানিয়ে নেয়; ইউজার থাকলে পাসওয়ার্ড অবশ্যই `ADMIN_PASSWORD`-এর সাথে মিলতে হবে)।
 1. **Firestore → Rules:** `firestore.rules` ফাইলের লেখা পেস্ট করে **Publish**।
 2. **Authentication → Settings → Authorized domains:** আপনার `xxx.netlify.app` যোগ করুন।
 3. (পরে টাকা দিলে) Storage → Rules-এ `storage.rules`।
@@ -12,7 +12,7 @@ Netlify → Add new site → Import from GitHub → `my-shop` → Deploy। (Ver
 ## ৩. টেলিগ্রাম বট
 সাইট ডিপ্লয় হয়ে একবার খুললেই বট নিজে চালু হয়। না হলে একবার খুলুন:
 `https://আপনার-সাইট.netlify.app/api/telegram?setup=878777`
-এরপর বটে `/menu` লিখুন → 🟢 চালু / 🔴 বন্ধ।
+নতুন অর্ডার এলে বটে শুধু **✅ কনফার্ম / ❌ রিজেক্ট** বাটন আসবে — কনফার্ম করলে অর্ডার "কনফার্মড" হয় (স্টকও কমে), রিজেক্ট করলে অর্ডার মুছে যায়। বটে আর কোনো কমান্ড/মেনু নেই। অর্ডার চালু/বন্ধ করা যাবে শুধু অ্যাডমিন → সেটিংস থেকে।
 
 ## ৪. সাইট চালু হওয়ার পর অ্যাডমিন → সেটিংসে
 - ফোন, WhatsApp, ঠিকানা, ফেসবুক লিংক, রিটার্ন পলিসি, Pixel ID বসান।
