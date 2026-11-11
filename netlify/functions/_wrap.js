@@ -5,7 +5,7 @@ const adapt = fn => async event => {
     let body = {}; try { body = raw ? JSON.parse(raw) : {}; } catch (e) {}
     const q = event.queryStringParameters || {};
     const r = await fn({ method: event.httpMethod, headers: event.headers || {}, query: q, id: q.id, body, origin: new URL(event.rawUrl).origin });
-    return { statusCode: r.status, headers: r.headers, body: r.body };
+    return { statusCode: r.status, headers: r.headers, body: r.body, isBase64Encoded: !!r.b64 };
   } catch (e) { return { statusCode: 500, body: JSON.stringify({ error: e.message }) }; }
 };
 module.exports = { core, adapt };

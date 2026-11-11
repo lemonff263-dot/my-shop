@@ -2,15 +2,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{db}/documents {
     function admin() { return request.auth != null; }
+    // কাউন্টার কতটা বাড়ল (একবারে সীমার বেশি বাড়ানো যাবে না)
+    function d(k) { return request.resource.data.get(k, 0) - (resource == null ? 0 : resource.data.get(k, 0)); }
+    function okInc(k, m) { return d(k) >= 0 && d(k) <= m; }
 
     match /products/{id} { allow read: if true; allow write: if admin(); }
     match /settings/{id} { allow read: if true; allow write: if admin(); }
     match /expenses/{id} { allow read, write: if admin(); }
 
+    // ছবি (ফ্রি মোড): সবাই দেখতে পারবে, শুধু অ্যাডমিন যোগ/মুছতে পারবে
+    match /imgs/{id} {
+      allow read: if true;
+      allow create, update: if admin() && request.resource.data.d is string && request.resource.data.d.size() < 400000;
+      allow delete: if admin();
+    }
+
     match /orders/{id} {
-      allow get: if true;                 // অর্ডার আইডি জানলে ট্র্যাক করা যাবে
-      allow list, update, delete: if admin();   // সব অর্ডার শুধু অ্যাডমিন দেখবে
-      allow create: if get(/databases/$(db)/documents/settings/main).data.get('orderOpen', true) == true   // বট অফ করলে নতুন অর্ডার বন্ধ
+      allow get: if true;                        // অর্ডার আইডি জানলে ট্র্যাক করা যাবে
+      allow list, update, delete: if admin();    // সব অর্ডার শুধু অ্যাডমিন দেখবে
+      allow create: if (!exists(/databases/$(db)/documents/settings/main) || get(/databases/$(db)/documents/settings/main).data.get('orderOpen', true) == true)   // বট দিয়ে অফ করলে নতুন অর্ডার বন্ধ
         && request.resource.data.status == 'pending'
         && request.resource.data.name is string && request.resource.data.name.size() <= 80
         && request.resource.data.phone.matches('^01[0-9]{9}$')
@@ -30,6 +40,22 @@ service cloud.firestore {
         && request.resource.data.name.size() <= 60
         && rid == request.resource.data.oid + '_' + request.resource.data.pid
         && get(/databases/$(db)/documents/orders/$(request.resource.data.oid)).data.status == 'delivered';
+    }
+
+    // ট্রাফিক পরিসংখ্যান: যে কেউ শুধু গুনতে (বাড়াতে) পারবে, পড়তে পারবে শুধু অ্যাডমিন
+    match /stats/{day} {
+      allow read, delete: if admin();
+      allow create, update: if request.resource.data.keys().hasOnly(['date','uv','visits','pages','cart','co','ord','src_fb','src_google','src_direct','src_other'])
+        && request.resource.data.date is string && request.resource.data.date.size() == 10
+        && okInc('uv', 1) && okInc('visits', 1) && okInc('pages', 40) && okInc('cart', 20) && okInc('co', 5) && okInc('ord', 5)
+        && okInc('src_fb', 1) && okInc('src_google', 1) && okInc('src_direct', 1) && okInc('src_other', 1);
+    }
+    match /pstats/{id} {
+      allow read, delete: if admin();
+      allow create, update: if request.resource.data.keys().hasOnly(['date','pid','v','u','c'])
+        && request.resource.data.date is string && request.resource.data.date.size() == 10
+        && request.resource.data.pid is string && request.resource.data.pid.size() <= 40
+        && okInc('v', 20) && okInc('u', 1) && okInc('c', 20);
     }
   }
 }
