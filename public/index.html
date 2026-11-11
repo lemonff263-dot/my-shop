@@ -7,7 +7,7 @@
 <meta name="description" content="পছন্দের পণ্য অনলাইনে কিনুন — দ্রুত ডেলিভারি, সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।">
 <meta name="theme-color" content="#0e6b52">
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin><link rel="preconnect" href="https://firestore.googleapis.com">
-<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"><link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js">
+<script>try{document.documentElement.dataset.th=localStorage.th||'light'}catch(e){}</script>
 <meta property="og:type" content="website"><meta property="og:title" content="মোড়ের দোকান"><meta property="og:description" content="পছন্দের পণ্য অনলাইনে কিনুন — দ্রুত ডেলিভারি।">
 <link rel="icon" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,11 +122,16 @@ footer{background:var(--card);border-top:1px solid var(--line);padding:22px 16px
 .lbx{position:fixed;inset:0;background:#000e;z-index:99;display:grid;place-items:center;overflow:auto}.lbx img{max-width:100%;max-height:100%;touch-action:pinch-zoom}
 .rvi button{border:0;background:none;color:#d33;cursor:pointer}
 .chips:empty{display:none}.kp{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kp div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;font-size:13px}.kp b{display:block;font-size:22px;color:var(--ac)}.bar{height:6px;background:var(--ac);border-radius:4px;margin-top:4px}.tr td{padding:6px 4px;border-bottom:1px solid var(--line)}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+main.anim>*{animation:fu .38s ease both}.fi,main.anim .gr>.pc{animation:fu .4s ease both}
+main.anim .gr>.pc:nth-child(2){animation-delay:.05s}main.anim .gr>.pc:nth-child(3){animation-delay:.1s}main.anim .gr>.pc:nth-child(4){animation-delay:.15s}
+@media(prefers-reduced-motion:reduce){main.anim>*,.fi,main.anim .gr>.pc{animation:none}}
 .cls{background:#b3261e;color:#fff;text-align:center;padding:10px 14px;font-weight:600}
 </style>
 </head>
 <body>
-<div id="app"></div><div id="toast"></div>
+<div id="app"><header><a href="#/" class="lg"><img class="lgi" src="img/logo.webp" width="120" height="120" alt=""></a></header><main><div class="sk" style="aspect-ratio:2.4;border-radius:18px;margin:12px 0"></div><div class="gr"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></main></div><div id="toast"></div>
+<script>(function(){try{var B='https://firestore.googleapis.com/v1/projects/morer-dokan/databases/(default)/documents',K='AIzaSyB3OS9FOVb0T2dFXgP6XkWzYoC49IkJHfg',m=location.hash.match(/^#\/[pl]\/([\w-]+)/)||location.pathname.match(/^\/p\/([\w-]+)/)||location.search.match(/[?&]p=([\w-]+)/),f=function(u){return fetch(B+u+(u.indexOf('?')<0?'?':'&')+'key='+K).then(function(r){return r.ok?r.json():null}).catch(function(){return null})};window.__pf={s:f('/settings/main'),p:f('/products?pageSize=12'),o:m?f('/products/'+m[1]):null,id:m&&m[1]}}catch(e){}})();</script>
 <script type="module">
 /* ============ SETUP ============
 1) Replace FB config below with your Firebase web-app config.
@@ -142,8 +147,10 @@ footer{background:var(--card);border-top:1px solid var(--line);padding:22px 16px
 const FB={apiKey:"AIzaSyB3OS9FOVb0T2dFXgP6XkWzYoC49IkJHfg",authDomain:"morer-dokan.firebaseapp.com",projectId:"morer-dokan",storageBucket:"morer-dokan.firebasestorage.app",messagingSenderId:"493593184675",appId:"1:493593184675:web:c50557a29ea09d6f4e7216",measurementId:"G-E9V1CLCCGV"};
 const V='https://www.gstatic.com/firebasejs/10.12.2/firebase-';
 let DEMO=FB.apiKey.startsWith('YOUR'),initializeApp,getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,onSnapshot,increment,limit,startAfter,getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence,getStorage,ref,uploadBytes,getDownloadURL;
-if(!DEMO){try{const [a,f]=await Promise.all(['app','firestore'].map(x=>import(V+x+'.js')));
- ({initializeApp}=a);({getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,onSnapshot,increment,limit,startAfter}=f)}catch(e){document.body.innerHTML='<div style="font:16px sans-serif;text-align:center;padding:60px 20px"><p>সংযোগ সমস্যা — ইন্টারনেট চেক করে আবার চেষ্টা করুন।</p><button onclick="location.reload()" style="margin-top:14px;padding:12px 22px;font:inherit;border-radius:10px;border:0;background:#0e6b52;color:#fff">আবার চেষ্টা করুন</button></div>';throw e}}
+let app,db,sdkOk=0,sdkStarted=0,sdkRes,sdkRej;const sdkP=new Promise((r,j)=>{sdkRes=r;sdkRej=j});sdkP.catch(()=>{});
+const loadSdk=async()=>{const [a,f]=await Promise.all(['app','firestore'].map(x=>import(V+x+'.js')));({initializeApp}=a);({getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,onSnapshot,increment,limit,startAfter}=f);app=initializeApp(FB);db=getFirestore(app);sdkOk=1};
+const startSdk=()=>{if(sdkStarted)return;sdkStarted=1;loadSdk().then(sdkRes,sdkRej)};
+const sdk=()=>{startSdk();return sdkP};
 if(DEMO){ /* ডেমো মোড: Firebase ছাড়াই মেমরিতে চলে (প্রিভিউর জন্য) */
  const im=(a,b,x)=>'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><text x="200" y="230" font-size="120" text-anchor="middle">${x}</text></svg>`);
  const bn=(a,b,x)=>'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 375"><defs><linearGradient id="g"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1000" height="375" fill="url(#g)"/><text x="500" y="210" font-size="64" font-family="sans-serif" fill="#fff" text-anchor="middle">${x}</text></svg>`);
@@ -160,7 +167,7 @@ if(DEMO){ /* ডেমো মোড: Firebase ছাড়াই মেমরি
  onSnapshot=(r,cb)=>{const f=()=>cb(r.i!==undefined?{data:()=>D[r.c][r.i]}:snap(r.c));subs.push(f);f();return()=>subs.splice(subs.indexOf(f),1)};
  onAuthStateChanged=(_,cb)=>{au=cb;cb(null)};signInWithEmailAndPassword=async()=>au({email:'demo'});signOut=async()=>au(null);setPersistence=async()=>{};
  ref=()=>({});uploadBytes=async()=>{};getDownloadURL=async()=>''}
-const app=initializeApp(FB),db=getFirestore(app);let auth,sto;
+let auth,sto;if(DEMO){app=initializeApp(FB);db=getFirestore(app);sdkOk=1;sdkStarted=1;sdkRes()}
 const $=s=>document.querySelector(s),L=localStorage;
 const S={lang:L.lang||'bn',th:L.th||'light',products:[],set:{},user:null,orders:[],exp:[],tab:'dash',range:7,of:'',cart:JSON.parse(L.cart||'[]'),co:[],q:1,f:{},geo:null,ed:null,loaded:0};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -173,7 +180,7 @@ function tt(m){const e=$('#toast');e.textContent=m;e.style.display='block';clear
 function apply(){document.documentElement.dataset.th=S.th;document.documentElement.lang=S.lang;document.title=S.set.name||'মোড়ের দোকান'}
 const act=()=>S.products.filter(p=>p.active!==false&&p.stock>0);
 
-const IC=d=>`<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`,I={box:IC('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),cart:IC('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 002 1.6h7.7a2 2 0 002-1.5L21 7H6"/>'),gear:IC('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>'),sun:IC('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>'),moon:IC('<path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/>'),share:IC('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>')};
+const IC=d=>`<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`,I={box:IC('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),cart:IC('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 002 1.6h7.7a2 2 0 002-1.5L21 7H6"/>'),gear:IC('<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>'),sun:IC('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>'),moon:IC('<path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/>'),share:IC('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>')};
 const WA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 00-8.7 15L2 22l5.2-1.4A10 10 0 1012 2zm5 13.6c-.2.6-1.3 1.2-1.8 1.2-.5.1-1.1.1-3.500-.9-2.900-1.300-4.700-4.200-4.800-4.400-.2-.2-1.200-1.600-1.200-3s.7-2.100 1-2.400c.3-.3.600-.3.800-.3h.6c.2 0 .4 0 .6.500l.9 2.100c.1.200.1.400 0 .5l-.4.600c-.2.200-.3.300-.1.600.9 1.400 1.800 2 3 2.700.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l2 1c.3.100.5.200.5.400.1.200.1.800-.1 1.400z"/></svg>';
 const waN=n=>{n=String(n||'').replace(/\D/g,'');return n.startsWith('88')?n:'88'+n};
 const minAdv=m=>m=='cod'&&S.set.codMin!=null&&S.set.codMin!==''?+S.set.codMin:delv();
@@ -190,19 +197,38 @@ function foot(){const s=S.set,n=esc(s.name||'মোড়ের দোকান'
 const pcur=()=>S.products.find(x=>x.id==cur().replace(/^\//,'').split('/')[1]);
 function swp(){const m=$('#mi'),pp=pcur();if(!m||!pp)return;let x0=0;m.ontouchstart=e=>x0=e.touches[0].clientX;m.ontouchend=e=>{const d=e.changedTouches[0].clientX-x0,n=(pp.images||[]).length;if(Math.abs(d)>40&&n>1){S.gi=((S.gi||0)+(d<0?1:-1)+n)%n;setImg(m,pp.images[S.gi])}}}
 function beep(){tt('🔔 নতুন অর্ডার এসেছে!');try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.frequency.value=880;o.start();setTimeout(()=>{o.stop();a.close()},400)}catch(e){}document.title='🔔 নতুন অর্ডার'}
+const FSB=`https://firestore.googleapis.com/v1/projects/${FB.projectId}/databases/(default)/documents`,KEY='key='+encodeURIComponent(FB.apiKey);
+function fdec(v){if(!v)return null;if('stringValue' in v)return v.stringValue;if('integerValue' in v)return Number(v.integerValue);if('doubleValue' in v)return v.doubleValue;if('booleanValue' in v)return v.booleanValue;if('timestampValue' in v)return Date.parse(v.timestampValue);if('arrayValue' in v)return(v.arrayValue.values||[]).map(fdec);if('mapValue' in v){const o={};for(const k in(v.mapValue.fields||{}))o[k]=fdec(v.mapValue.fields[k]);return o}return null}
+const fdoc=d=>{const o={id:d.name.split('/').pop()};for(const k in(d.fields||{}))o[k]=fdec(d.fields[k]);return o};
+const pf=k=>{const p=window.__pf;if(p&&p[k]){const x=p[k];p[k]=null;return x}return null};
+async function dbGet(col,id){if(DEMO){const d=await getDoc(doc(db,col,id));return d.exists()?{id:d.id,...d.data()}:null}
+ let j=null;const pre=col=='products'&&window.__pf&&window.__pf.id==id?pf('o'):col=='settings'?pf('s'):null;if(pre)j=await pre;
+ if(!j){const r=await fetch(`${FSB}/${col}/${id}?${KEY}`);if(r.status==404)return null;if(!r.ok)throw new Error('load '+r.status);j=await r.json()}
+ return j&&j.name?fdoc(j):null}
+async function dbList(col,size,tok){if(DEMO){const s=await getDocs(tok?query(collection(db,col),limit(size+1),startAfter({id:tok})):query(collection(db,col),limit(size+1))),ds=s.docs.slice(0,size).map(d=>({id:d.id,...d.data()}));return{docs:ds,next:s.docs.length>size?ds[ds.length-1].id:''}}
+ let j=!tok&&col=='products'?pf('p'):null;j=j?await j:null;
+ if(!j){const r=await fetch(`${FSB}/${col}?pageSize=${size}${tok?'&pageToken='+encodeURIComponent(tok):''}&${KEY}`);if(!r.ok)throw new Error('list '+r.status);j=await r.json()}
+ return{docs:(j.documents||[]).map(fdoc),next:j.nextPageToken||''}}
+async function dbQ(col,field,val){if(DEMO){const s=await getDocs(query(collection(db,col),where(field,'==',val)));return s.docs.map(d=>({id:d.id,...d.data()}))}
+ const r=await fetch(`${FSB}:runQuery?${KEY}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({structuredQuery:{from:[{collectionId:col}],where:{fieldFilter:{field:{fieldPath:field},op:'EQUAL',value:{stringValue:val}}}}})});if(!r.ok)throw new Error('query '+r.status);return(await r.json()).filter(x=>x.document).map(x=>fdoc(x.document))}
+try{const c=JSON.parse(L.pf_p||'null');if(c&&c.length){S.products=c;S.loaded=1}const cs=L.pf_s;if(cs){S.set=JSON.parse(cs)||{};S._sj=cs}}catch(e){}
+let u3;async function pollSet(){try{const s=(await dbGet('settings','main'))||{},j=JSON.stringify(s);if(j!==S._sj){S._sj=j;S.set=s;try{if(j.length<300000)L.pf_s=j}catch(e){}S._pxd=1;ldPx();live()}else if(!S._pxd){S._pxd=1;ldPx()}}catch(e){}setTimeout(pollSet,45000)}
+function adminWait(){sdk().then(()=>route()).catch(()=>{});return '<div class="sk" style="aspect-ratio:2;margin:20px 0"></div>'}
 const PAGE=12,PH='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 S.one={};S.cur=null;S.done=0;S.trr=7;let authReady=null;
-const mergeP=docs=>docs.forEach(d=>{const o={id:d.id,...d.data()},i=S.products.findIndex(x=>x.id==o.id);i<0?S.products.push(o):S.products[i]=o});
+const mergeP=docs=>docs.forEach(o=>{const i=S.products.findIndex(x=>x.id==o.id);i<0?S.products.push(o):S.products[i]={...o,_one:S.products[i]._one}});
 const onHome=()=>!!$('#pg');
-function refreshPg(){const e=$('#pg');if(!e)return;e.innerHTML=grid();const c=$('#chips');if(c)c.innerHTML=chips();hydrate();watch()}
-async function loadMore(){if(S.busyL||S.done)return;S.busyL=1;const first=!S.loaded;try{const q=S.cur?query(collection(db,'products'),limit(PAGE+1),startAfter(S.cur)):query(collection(db,'products'),limit(PAGE+1)),s=await getDocs(q),ds=s.docs.slice(0,PAGE);mergeP(ds);if(ds.length)S.cur=ds[ds.length-1];if(s.docs.length<=PAGE)S.done=1}catch(e){S.done=1}S.busyL=0;S.loaded=1;first||!onHome()?live():refreshPg()}
+function refreshPg(){const e=$('#pg');if(!e)return;const n0=e.querySelectorAll('.gr>.pc').length;e.innerHTML=grid();const c=$('#chips');if(c)c.innerHTML=chips();if(n0)[...e.querySelectorAll('.gr>.pc')].slice(n0).forEach(x=>x.classList.add('fi'));hydrate();watch()}
+async function loadMore(){if(S.busyL||S.done)return;S.busyL=1;const was=S.loaded;try{const r=await dbList('products',PAGE,S.tok);
+ if(!S.tok){const keep=S.products.filter(x=>x._one&&!r.docs.some(d=>d.id==x.id)),j=JSON.stringify(r.docs),same=!S.fresh&&was&&j==L.pf_p;S.products=[...r.docs,...keep];if(!S.fresh)try{if(j.length<500000)L.pf_p=j}catch(e){}S.fresh=1;S.tok=r.next;if(!r.next)S.done=1;S.busyL=0;S.loaded=1;if(same)return;was&&onHome()?refreshPg():live();return}
+ mergeP(r.docs);S.tok=r.next;if(!r.next)S.done=1}catch(e){S.done=1}S.busyL=0;S.loaded=1;onHome()?refreshPg():live()}
 async function loadAll(){let g=0;while(!S.done&&g++<300){if(S.busyL){await new Promise(r=>setTimeout(r,50));continue}await loadMore()}}
-const refreshP=async()=>{S.products=[];S.cur=null;S.done=0;S.loaded=0;await loadAll()};
-async function loadOne(id){if(S.one[id]!==undefined)return;S.one[id]=0;const had=S.products.some(x=>x.id==id);try{const d=await getDoc(doc(db,'products',id));if(d.exists())mergeP([d])}catch(e){}S.one[id]=1;if(!had){cur().replace(/^\//,'').split('/')[0]=='checkout'?route():live()}}
-const nfx=id=>S.one[id]===1?`<p class="c">${t('nf')}</p>`:'<div class="sk" style="aspect-ratio:1;max-width:520px;margin:20px auto"></div>';
+const refreshP=async()=>{S.products=[];S.tok='';S.done=0;S.loaded=0;S.fresh=1;await loadAll()};
+async function loadOne(id){if(S.one[id]!==undefined)return;S.one[id]=0;const old=S.products.find(x=>x.id==id),ob=old?JSON.stringify([old.price,old.offer,old.stock,old.name,old.active]):'';try{const d=await dbGet('products',id);if(d){mergeP([d]);const q=S.products.find(x=>x.id==id);if(q)q._one=1}}catch(e){}S.one[id]=1;const nw=S.products.find(x=>x.id==id),nb=nw?JSON.stringify([nw.price,nw.offer,nw.stock,nw.name,nw.active]):'';if(!old||ob!==nb){cur().replace(/^\//,'').split('/')[0]=='checkout'?route():live()}}
+const nfx=id=>!id?(setTimeout(()=>{location.hash='/'},0),''):S.one[id]===1?`<p class="c">${t('nf')}</p>`:'<div class="sk" style="aspect-ratio:1;max-width:520px;margin:20px auto"></div>';
 const IMG=(u,a='',th='')=>{u=u||'';return !u?`<img src="${PH}" ${a}>`:u.startsWith('fs:')?`<img data-fs="${u.slice(3)}" src="${th||PH}" ${a}>`:`<img src="${u}" ${a}>`};
 const fsc={};
-function fsImg(id){return fsc[id]||(fsc[id]=(async()=>{try{const c=L['im_'+id];if(c)return c}catch(e){}let v='';try{const d=await getDoc(doc(db,'imgs',id));v=d.exists()?d.data().d:''}catch(e){}try{if(v&&v.length<250000)L['im_'+id]=v}catch(e){try{Object.keys(L).filter(k=>k.startsWith('im_')).forEach(k=>L.removeItem(k))}catch(x){}}return v})())}
+function fsImg(id){return fsc[id]||(fsc[id]=(async()=>{try{const c=L['im_'+id];if(c)return c}catch(e){}let v='';try{const d=await dbGet('imgs',id);v=d?d.d:''}catch(e){}try{if(v&&v.length<250000)L['im_'+id]=v}catch(e){try{Object.keys(L).filter(k=>k.startsWith('im_')).forEach(k=>L.removeItem(k))}catch(x){}}return v})())}
 function hydrate(){document.querySelectorAll('img[data-fs]').forEach(e=>{const id=e.dataset.fs;e.removeAttribute('data-fs');fsImg(id).then(v=>{if(v)e.src=v})})}
 const setImg=(e,u)=>{if(!e)return;if((u||'').startsWith('fs:'))fsImg(u.slice(3)).then(v=>{if(v)e.src=v});else e.src=u};
 function watch(){if(S.io)S.io.disconnect();const e=$('#sent');if(e&&'IntersectionObserver' in window){S.io=new IntersectionObserver(en=>{if(en[0].isIntersecting)loadMore()},{rootMargin:'500px'});S.io.observe(e)}}
@@ -217,7 +243,7 @@ const sched=()=>{clearTimeout(qt);qt=setTimeout(flush,4000)};
 const bump=(k,n=1)=>{if(!TRK)return;Q.s[k]=(Q.s[k]||0)+n;sched()};
 const bumpP=(id,k)=>{if(!TRK)return;const o=Q.p[id]=Q.p[id]||{};o[k]=(o[k]||0)+1;sched()};
 const incs=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,increment(v)]));
-async function flush(){const q=Q;Q={s:{},p:{}};const day=dayKey();try{if(Object.keys(q.s).length)await setDoc(doc(db,'stats',day),{date:day,...incs(q.s)},{merge:true});for(const id in q.p)await setDoc(doc(db,'pstats',day+'_'+id),{date:day,pid:id,...incs(q.p[id])},{merge:true})}catch(e){}}
+async function flush(){const q=Q;Q={s:{},p:{}};const day=dayKey();try{await sdk();if(Object.keys(q.s).length)await setDoc(doc(db,'stats',day),{date:day,...incs(q.s)},{merge:true});for(const id in q.p)await setDoc(doc(db,'pstats',day+'_'+id),{date:day,pid:id,...incs(q.p[id])},{merge:true})}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flush()});
 function trkPage(){if(!TRK)return;const d=dayKey();if(L.uvd!==d){L.uvd=d;bump('uv')}if(!sessionStorage.getItem('sv')){sessionStorage.setItem('sv','1');bump('visits');const r=document.referrer||'';bump(/fbclid/.test(location.search)||/facebook|fb\.|instagram|messenger|l\.wl\./i.test(r)?'src_fb':/google\./i.test(r)?'src_google':!r||r.includes(location.host)?'src_direct':'src_other')}bump('pages')}
 function trkProd(id){if(!TRK)return;bumpP(id,'v');const k='pvd_'+dayKey();let a=[];try{a=JSON.parse(L[k]||'[]')}catch(e){}if(!a.includes(id)){a.push(id);try{Object.keys(L).filter(x=>x.startsWith('pvd_')&&x!=k).forEach(x=>L.removeItem(x));L[k]=JSON.stringify(a)}catch(e){}bumpP(id,'u')}}
@@ -232,7 +258,7 @@ async function trLoad(){const e=$('#trb');if(!e)return;const d=new Date();d.setD
  <div class="card" style="text-align:left"><b>কোথা থেকে এসেছে</b><br>ফেসবুক ${T.src_fb} • গুগল ${T.src_google} • সরাসরি ${T.src_direct} • অন্যান্য ${T.src_other}</div>
  <div class="card" style="text-align:left"><b>প্রোডাক্ট ভিউ</b><table class="tr" style="width:100%;font-size:13px"><tr><td></td><td>ভিউ</td><td>ইউনিক</td><td>কার্ট</td></tr>${rows.map(([id,o])=>`<tr><td>${nm(id)}<div class="bar" style="width:${Math.max(4,Math.round(o.v*100/mx))}%"></div></td><td>${o.v}</td><td>${o.u}</td><td>${o.c}</td></tr>`).join('')||'<tr><td colspan="4">এখনও কোনো ডেটা নেই</td></tr>'}</table></div>
  <div class="card" style="text-align:left"><b>দিনভিত্তিক</b><table class="tr" style="width:100%;font-size:13px"><tr><td></td><td>ভিজিটর</td><td>ভিজিট</td><td>পেজ</td><td>অর্ডার</td></tr>${days.sort((x,y)=>y.date>x.date?1:-1).slice(0,14).map(v=>`<tr><td>${v.date}</td><td>${v.uv||0}</td><td>${v.visits||0}</td><td>${v.pages||0}</td><td>${v.ord||0}</td></tr>`).join('')||'<tr><td colspan="5">এখনও কোনো ডেটা নেই</td></tr>'}</table></div>`}catch(x){e.innerHTML='ডেটা আনা যায়নি: '+esc(x.message)}}
-function ensureAuth(){if(authReady)return authReady;let done;authReady=new Promise(r=>done=r);(async()=>{if(!DEMO){const u=await import(V+'auth.js');({getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence}=u)}auth=getAuth(app);onAuthStateChanged(auth,authCb);done()})().catch(()=>{authReady=null;done()});return authReady}
+function ensureAuth(){if(authReady)return authReady;let done;authReady=new Promise(r=>done=r);(async()=>{await sdk();if(!DEMO){const u=await import(V+'auth.js');({getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence}=u)}auth=getAuth(app);onAuthStateChanged(auth,authCb);done()})().catch(()=>{authReady=null;done()});return authReady}
 /* ---------- views ---------- */
 function head(){const n=sum(S.cart,c=>c.qty);return `<header><a class="lg" href="#/"><img class="lgi" src="img/logo.webp" width="120" height="120" alt="মোড়ের দোকান"></a><nav><button aria-label="Language" onclick="A.lang()">${S.lang=='bn'?'EN':'বাং'}</button><button aria-label="Theme" onclick="A.th()">${S.th=='dark'?I.sun:I.moon}</button><a href="#/track" title="${t('track')}" aria-label="${t('track')}">${I.box}</a><a href="#/cart" aria-label="${t('cart')}">${I.cart}${n?`<i>${n}</i>`:''}</a>${S.user?'<a href="#/admin" aria-label="Admin">'+I.gear+'</a>':''}</nav></header>${closed()?`<div class="cls">${S.lang=='bn'?'🔴 সাময়িকভাবে অর্ডার নেওয়া বন্ধ আছে':'🔴 Orders are temporarily closed'}</div>`:''}`}
 function card(p,c=''){const im=p.thumb||(p.images||[])[0]||'';return `<a class="pc ${c}" href="#/p/${p.id}">${p.stock<=0?`<span class="so">${t('sold')}</span>`:''}${IMG(im,`alt="${esc(p.name)}" loading="lazy" decoding="async"`)}<div class="pi"><b>${esc(p.name)}</b><span>${fmt(pr(p))}${p.offer&&p.price>p.offer?` <s>${fmt(p.price)}</s>`:''}</span></div></a>`}
@@ -247,7 +273,7 @@ function pPage(id){const p=S.products.find(x=>x.id==id);if(!p)return nfx(id);
  <section class="sec"><h3>${t('desc')}</h3><p class="ds">${esc(p.desc||'')}</p></section>
  <section class="sec"><h3>${t('reviews')}</h3><div id="rv"></div></section>
  <section class="sec"><h3>${t('wr')}</h3><p class="mut" style="font-size:13px">${t('note')}</p><label>${t('oid')}<input id="rid"></label><label>${t('name')}<input id="rn"></label><label>★<select id="rs">${[5,4,3,2,1].map(n=>`<option value=${n}>${'★'.repeat(n)}</option>`).join('')}</select></label><label>${t('cmt')}<textarea id="rt" rows="3"></textarea></label><button class="b" onclick="A.rev('${p.id}')">${t('send')}</button></section>${rel(p)}${out?'':`<div class="stk"><b>${fmt(pr(p))}</b><button class="b" onclick="A.buy('${p.id}')">${t('buy')}</button></div>`}`}
-async function loadRv(id){const s=await getDocs(query(collection(db,'reviews'),where('pid','==',id))),a=s.docs.map(d=>({...d.data(),id:d.id})).sort((x,y)=>y.at-x.at),e=$('#rv');if(!e)return;
+async function loadRv(id){const a=(await dbQ('reviews','pid',id)).sort((x,y)=>y.at-x.at),e=$('#rv');if(!e)return;
  const r=a2=>a2.map(x=>`<div class="rvi"><b>${esc(x.name)}</b> <span class="st">${'★'.repeat(x.star)}</span>${S.user?` <button aria-label="Delete" onclick="A.rdel('${x.id}','${id}')">✕</button>`:''}<br>${esc(x.text)}</div>`).join('');
  e.innerHTML=a.length?r(a.slice(0,3))+(a.length>3?`<button class="b o sm2" id="mr">${t('more')}</button>`:''):`<p class="mut">${t('norv')}</p>`;
  if($('#mr'))$('#mr').onclick=()=>e.innerHTML=r(a)}
@@ -292,8 +318,8 @@ function ordDet(o){const s5=ST.slice(0,5),cur=s5.indexOf(o.status),h=o.history||
  <p>${esc(o.name)} • ${o.phone}<br>${esc(o.address)}, ${esc(o.upazila)}, ${esc(o.district)}</p>
  <div class="sum"><div><span>${t('sub')}</span><span>${fmt(o.subtotal)}</span></div><div><span>${t('delv')}</span><span>${fmt(o.delivery)}</span></div><div class="tt"><span>${t('total')}</span><span>${fmt(o.total)}</span></div><div><span>${t('adv')}</span><span>${fmt(o.advance)}</span></div><div><span>${t('due')}</span><b>${fmt(o.due)}</b></div></div></div>`}
 async function loadTr(id){const e=$('#tr');if(!e)return;e.innerHTML='…';
- try{if(id){const s=await getDoc(doc(db,'orders',id));e.innerHTML=s.exists()?ordDet({id:s.id,...s.data()}):`<p class="c">${t('nf')}</p>`;return}
- const ids=JSON.parse(L.mo||'[]'),r=(await Promise.all(ids.map(i=>getDoc(doc(db,'orders',i))))).filter(s=>s.exists()).map(s=>({id:s.id,...s.data()}));
+ try{if(id){const s=await dbGet('orders',id);e.innerHTML=s?ordDet(s):`<p class="c">${t('nf')}</p>`;return}
+ const ids=JSON.parse(L.mo||'[]'),r=(await Promise.all(ids.map(i=>dbGet('orders',i)))).filter(Boolean);
  e.innerHTML=r.length?`<h3 style="margin-top:12px">${t('myo')}</h3>`+r.map(ordRow).join(''):`<p class="c">${t('empty')}</p>`}catch(x){e.innerHTML=`<p class="c">${esc(x.message)}</p>`}}
 
 /* ---------- admin ---------- */
@@ -322,11 +348,11 @@ function aSet(){const s=S.set;return `<div class="sec"><h3>সেটিংস</h
 let R=(()=>{const q=new URLSearchParams(location.search).get('p')||(location.pathname.match(/^\/p\/([\w-]+)/)||[])[1];if(q&&!location.hash){try{history.replaceState(null,'','/#/p/'+q)}catch(e){}}return null})();const cur=()=>R??location.hash.slice(1);
 function go(p){R=p;try{history.pushState(null,'',location.pathname+'#'+p)}catch(e){}route()}
 function route(){const h=cur().replace(/^\//,'').split('/'),p=h[0];apply();S.gi=0;
- const v=p=='p'?pPage(h[1]):p=='l'?landPage(h[1]):p=='cart'?cartPage():p=='checkout'?coPage():p=='done'?donePage(h[1]):p=='track'?trackPage():p=='admin'?adminPage():homePage();
+ const v=p=='p'?pPage(h[1]):p=='l'?landPage(h[1]):p=='cart'?cartPage():p=='checkout'?coPage():p=='done'?donePage(h[1]):p=='track'?trackPage():p=='admin'?(sdkOk?adminPage():adminWait()):homePage();
  $('#app').innerHTML=head()+`<main>${DEMO?'<p class="nt">ডেমো মোড: Firebase কনফিগ বসালে আসল ডেটা চলবে। অ্যাডমিন লগইনে যেকোনো ইমেইল/পাসওয়ার্ড চলবে। (#/admin)</p>':''}${v}</main>${p=='admin'?'':foot()}`;
  clearInterval(S.ti);
  if(!p){const bs=$('#bs');if(bs&&bs.children.length>1){let i=0;S.ti=setInterval(()=>{i=(i+1)%bs.children.length;bs.style.transform=`translateX(-${i*100}%)`;document.querySelectorAll('#dts i').forEach((d,k)=>d.className=k==i?'on':'')},5000)}}
- if((p=='p'||p=='l')&&S.loaded)loadRv(h[1]);if(p=='checkout'&&S.co.length){initCo();px('InitiateCheckout');bump('co')}if(p=='track')loadTr(h[1]);if(p=='p')swp();hydrate();watch();if(p=='p'||p=='l')loadOne(h[1]);if(p=='cart')S.cart.forEach(c=>loadOne(c.id));if(p=='checkout')S.co.forEach(c=>loadOne(c.id));if(p=='admin'){if(!authReady)ensureAuth();if(S.user&&!S.done)loadAll();if(S.user&&S.tab=='traffic')trLoad()}
+ if((p=='p'||p=='l')&&S.loaded)loadRv(h[1]);if(p=='checkout'&&S.co.length){initCo();px('InitiateCheckout');bump('co')}if(p=='track')loadTr(h[1]);if(p=='p')swp();hydrate();watch();{const mn=$('main');if(mn&&S.lr!==cur()){S.lr=cur();mn.classList.add('anim')}}if(p=='p'||p=='l')loadOne(h[1]);if(p=='cart')S.cart.forEach(c=>loadOne(c.id));if(p=='checkout')S.co.forEach(c=>loadOne(c.id));if(p=='checkout'||p=='cart')startSdk();if(p=='admin'){if(!authReady)ensureAuth();if(S.user&&!S.done)loadAll();if(S.user&&S.tab=='traffic')trLoad()}
  if(p=='p'||p=='l'){const pp=S.products.find(x=>x.id==h[1]);if(pp){document.title=pp.name+' | '+(S.set.name||'মোড়ের দোকান');if(S.vc!=pp.id){S.vc=pp.id;trkProd(pp.id);px('ViewContent',{content_ids:[pp.id],content_name:pp.name,value:pr(pp),currency:'BDT'})}}}
  if(S.pv!==cur()){S.pv=cur();window.gtag&&gtag('event','page_view',{page_path:'/'+cur(),page_title:document.title});px('PageView');trkPage()}}
 window.route=route;window.S=S;
@@ -372,10 +398,10 @@ window.A={cat(c){S.cat=c;route();if(c&&!S.done)loadAll().then(refreshPg)},sq(v){
   if(!g('fn')||!/^01\d{9}$/.test(ph)||!S.f.d||!S.f.u||!g('fa')||!g('fs')||!g('ft')||ad<minAdv(m)||ad>tot)return tt(t('bad'));if(A.busy)return;if(S.co.some(c=>{const p=S.products.find(p=>p.id==c.id);return !p||p.stock<c.qty}))return tt(S.lang=='bn'?'পর্যাপ্ত স্টক নেই':'Not enough stock');A.busy=1;
   const items=S.co.map(c=>{const p=S.products.find(p=>p.id==c.id);return p&&{id:p.id,name:p.name+(c.v?' ('+c.v+')':''),price:pr(p),cost:+p.cost||0,qty:c.qty,img:''}}).filter(Boolean),id='R'+[...crypto.getRandomValues(new Uint8Array(9))].map(b=>(b%36).toString(36)).join('').toUpperCase(),n=Date.now();
   const nm=x=>S.lang=='bn'?x.bn_name:x.name;
-  try{await setDoc(doc(db,'orders',id),{name:g('fn'),phone:ph,district:nm(S.f.d),upazila:nm(S.f.u),address:g('fa'),items,subtotal:sb,delivery:dl,total:tot,advance:ad,due:tot-ad,method:m,wallet:w,sender:g('fs'),trx:g('ft'),status:'pending',history:[{s:'pending',t:n}],createdAt:n});
+  try{await sdk();await setDoc(doc(db,'orders',id),{name:g('fn'),phone:ph,district:nm(S.f.d),upazila:nm(S.f.u),address:g('fa'),items,subtotal:sb,delivery:dl,total:tot,advance:ad,due:tot-ad,method:m,wallet:w,sender:g('fs'),trx:g('ft'),status:'pending',history:[{s:'pending',t:n}],createdAt:n});
    L.mo=JSON.stringify([id,...JSON.parse(L.mo||'[]')]);if(S.fromCart){S.cart=[];L.cart='[]'}A.busy=0;bump('ord');flush();if(!DEMO)fetch('/api/notify',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id}),keepalive:true}).catch(()=>{});px('Purchase',{value:tot,currency:'BDT'});window.gtag&&gtag('event','purchase',{transaction_id:id,value:tot,currency:'BDT'});go('/done/'+id)}catch(e){A.busy=0;tt(e.message)}},
- ts(){const v=g('ts').toUpperCase();if(!v)return;if(/^01\d{9}$/.test(v)){Promise.all(JSON.parse(L.mo||'[]').map(i=>getDoc(doc(db,'orders',i)))).then(a=>{const r=a.filter(s=>s.exists()&&s.data().phone==v).map(s=>({id:s.id,...s.data()}));$('#tr').innerHTML=r.length?r.map(ordRow).join(''):`<p class="c">${t('nf')}</p>`})}else go('/track/'+v)},
- async rev(pid){const oid=g('rid').toUpperCase();if(!oid)return tt(t('rvx'));try{const s=await getDoc(doc(db,'orders',oid));if(!s.exists()||s.data().status!='delivered'||!s.data().items.some(i=>i.id==pid))return tt(t('rvx'));await setDoc(doc(db,'reviews',oid+'_'+pid),{pid,name:g('rn')||s.data().name,star:+g('rs'),text:g('rt'),oid,at:Date.now()});tt(t('thx'));loadRv(pid)}catch(e){tt(e.message)}},
+ ts(){const v=g('ts').toUpperCase();if(!v)return;if(/^01\d{9}$/.test(v)){Promise.all(JSON.parse(L.mo||'[]').map(i=>dbGet('orders',i))).then(a=>{const r=a.filter(o=>o&&o.phone==v);$('#tr').innerHTML=r.length?r.map(ordRow).join(''):`<p class="c">${t('nf')}</p>`})}else go('/track/'+v)},
+ async rev(pid){const oid=g('rid').toUpperCase();if(!oid)return tt(t('rvx'));try{await sdk();const o=await dbGet('orders',oid);if(!o||o.status!='delivered'||!o.items.some(i=>i.id==pid))return tt(t('rvx'));await setDoc(doc(db,'reviews',oid+'_'+pid),{pid,name:g('rn')||o.name,star:+g('rs'),text:g('rt'),oid,at:Date.now()});tt(t('thx'));loadRv(pid)}catch(e){tt(e.message)}},
  async login(){try{await ensureAuth();await setPersistence(auth,$('#lr').checked?browserLocalPersistence:browserSessionPersistence);await signInWithEmailAndPassword(auth,g('le'),g('lp'))}catch(e){tt('Login failed')}},
  logout(){L.removeItem('adm');ensureAuth().then(()=>signOut(auth));go('/')},
  async os(id){const o=S.orders.find(x=>x.id==id),s=g('s_'+id),d={status:s,track:g('n_'+id)};if(s!=o.status)d.history=[...(o.history||[]),{s,t:Date.now()}];
@@ -401,9 +427,9 @@ window.A={cat(c){S.cat=c;route();if(c&&!S.done)loadAll().then(refreshPg)},sq(v){
 /* ---------- boot ---------- */
 let u1,u2;
 loadMore();
-onSnapshot(doc(db,'settings','main'),s=>{S.set=s.data()||{};ldPx();live()});
-const authCb=u=>{S.user=u;if(u)L.adm='1';else if(authReady)L.removeItem('adm');u1&&u1();u2&&u2();S.orders=[];S.exp=[];S.oinit=0;
- if(u){u1=onSnapshot(collection(db,'orders'),s=>{const pv=S.orders.length,had=S.oinit;S.orders=s.docs.map(d=>({id:d.id,...d.data()}));S.oinit=1;if(had&&S.orders.length>pv)beep();live()});u2=onSnapshot(collection(db,'expenses'),s=>{S.exp=s.docs.map(d=>({id:d.id,...d.data()}));live()})}
+DEMO?onSnapshot(doc(db,'settings','main'),s=>{S.set=s.data()||{};ldPx();live()}):pollSet();
+const authCb=u=>{S.user=u;if(u)L.adm='1';else if(authReady)L.removeItem('adm');u1&&u1();u2&&u2();u3&&u3();u3=null;S.orders=[];S.exp=[];S.oinit=0;
+ if(u){u3=onSnapshot(doc(db,'settings','main'),s=>{S.set=s.data()||{};live()});u1=onSnapshot(collection(db,'orders'),s=>{const pv=S.orders.length,had=S.oinit;S.orders=s.docs.map(d=>({id:d.id,...d.data()}));S.oinit=1;if(had&&S.orders.length>pv)beep();live()});u2=onSnapshot(collection(db,'expenses'),s=>{S.exp=s.docs.map(d=>({id:d.id,...d.data()}));live()})}
  route()};
 if(L.adm==='1'||/^#\/admin/.test(location.hash))ensureAuth();
 if(!DEMO&&FB.measurementId){const s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id='+FB.measurementId;document.head.appendChild(s);window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config',FB.measurementId,{send_page_view:false})}

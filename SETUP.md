@@ -4,6 +4,7 @@
 Netlify → Add new site → Import from GitHub → `my-shop` → Deploy। (Vercel-এও চলবে: Framework "Other")
 
 ## ২. Firebase Console (একবারই)
+0. **Authentication → Sign-in method:** Email/Password চালু আছে কিনা দেখুন। **Authentication → Users → Add user:** ইমেইল `lemonff264@gmail.com`, পাসওয়ার্ড `Lemon444` (এই ইউজার না থাকলে বট থেকে অর্ডার অন/অফ কাজ করবে না আর অ্যাডমিন লগইনও হবে না)।
 1. **Firestore → Rules:** `firestore.rules` ফাইলের লেখা পেস্ট করে **Publish**।
 2. **Authentication → Settings → Authorized domains:** আপনার `xxx.netlify.app` যোগ করুন।
 3. (পরে টাকা দিলে) Storage → Rules-এ `storage.rules`।

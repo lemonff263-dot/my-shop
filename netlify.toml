@@ -11,5 +11,5 @@
 
 [[redirects]]
   from = "/p/*"
-  to = "/.netlify/functions/og?id=:splat"
+  to = "/.netlify/functions/og/:splat"
   status = 200
