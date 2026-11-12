@@ -32,6 +32,18 @@ service cloud.firestore {
         && request.resource.data.advance <= request.resource.data.total;
     }
 
+    // ডিসকাউন্ট কুপন: কোড জানলে যে কেউ যাচাই করতে পারবে (সব কুপনের তালিকা শুধু অ্যাডমিন দেখবে)।
+    // অর্ডারের সময় কাস্টমার শুধু ব্যবহার-সংখ্যা ঠিক ১ বাড়াতে পারবে, তাও সীমা শেষ না হলে।
+    match /coupons/{code} {
+      allow get: if true;
+      allow list, create, delete: if admin();
+      allow update: if admin() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])
+        && request.resource.data.used == resource.data.get('used', 0) + 1
+        && resource.data.get('active', true) == true
+        && (resource.data.get('limit', 0) == 0 || resource.data.get('used', 0) < resource.data.limit));
+    }
+
     match /reviews/{rid} {
       allow read: if true;
       allow delete: if admin();
